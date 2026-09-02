@@ -107,6 +107,12 @@ async function pollHa({ haUrl, haToken, entities, scenes, sensors }) {
     return { lights, scenes: sceneMap, sensors: sensorMap, error };
 }
 
+// Считает число сущностей update.* в состоянии "on" (т.е. доступных обновлений).
+async function fetchUpdatesCount(baseUrl, token) {
+    const states = await haGet(baseUrl, token, '/api/states');
+    return states.filter(s => s.entity_id.startsWith('update.') && s.state === 'on').length;
+}
+
 async function callService(baseUrl, token, service, entityId, extraData) {
     const domain = entityId.split('.')[0];
     await haPost(baseUrl, token, `/api/services/${domain}/${service}`,

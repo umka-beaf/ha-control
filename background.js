@@ -16,15 +16,24 @@ function getSettings() {
     return chrome.storage.sync.get(DEFAULTS);
 }
 
-function setBadge(error, anyOn) {
+// Значок показывает: ошибку связи (!) > число доступных обновлений > "on"
+// если что-то из управляемых объектов включено > пусто.
+function setBadge(error, anyOn, updatesCount) {
     if (error) {
         chrome.action.setBadgeText({ text: '!' });
         chrome.action.setBadgeBackgroundColor({ color: '#f87171' });
+        chrome.action.setTitle({ title: 'HA Control — ошибка подключения' });
+    } else if (updatesCount > 0) {
+        chrome.action.setBadgeText({ text: String(updatesCount) });
+        chrome.action.setBadgeBackgroundColor({ color: '#fbbf24' });
+        chrome.action.setTitle({ title: `HA Control — доступно обновлений: ${updatesCount}` });
     } else if (anyOn) {
         chrome.action.setBadgeText({ text: 'on' });
         chrome.action.setBadgeBackgroundColor({ color: '#4ade80' });
+        chrome.action.setTitle({ title: 'HA Control' });
     } else {
         chrome.action.setBadgeText({ text: '' });
+        chrome.action.setTitle({ title: 'HA Control' });
     }
 }
 
@@ -34,24 +43,36 @@ async function refresh() {
     const scenes = parseIds(s.scenes);
     const sensors = parseIds(s.sensors);
 
-    if (!entities.length || !s.haUrl || !s.haToken) {
+    if (!s.haUrl || !s.haToken) {
         await chrome.storage.local.set({
-            haState: { lights: {}, scenes: {}, sensors: {}, error: true, ts: Date.now() }
+            haState: { lights: {}, scenes: {}, sensors: {}, updatesCount: 0, error: true, ts: Date.now() }
         });
-        setBadge(true, false);
+        setBadge(true, false, 0);
+        return;
+    }
+
+    // Число обновлений не зависит от списка управляемых объектов, поэтому
+    // считаем его отдельно и не даём ему провалиться из-за ошибки в lights.
+    const updatesCount = await fetchUpdatesCount(s.haUrl, s.haToken).catch(() => 0);
+
+    if (!entities.length) {
+        await chrome.storage.local.set({
+            haState: { lights: {}, scenes: {}, sensors: {}, updatesCount, error: true, ts: Date.now() }
+        });
+        setBadge(true, false, updatesCount);
         return;
     }
 
     try {
         const state = await pollHa({ haUrl: s.haUrl, haToken: s.haToken, entities, scenes, sensors });
-        await chrome.storage.local.set({ haState: Object.assign(state, { ts: Date.now() }) });
+        await chrome.storage.local.set({ haState: Object.assign(state, { updatesCount, ts: Date.now() }) });
         const anyOn = Object.values(state.lights).some(l => l.state === 'on');
-        setBadge(state.error, anyOn);
+        setBadge(state.error, anyOn, updatesCount);
     } catch (e) {
         await chrome.storage.local.set({
-            haState: { lights: {}, scenes: {}, sensors: {}, error: true, ts: Date.now() }
+            haState: { lights: {}, scenes: {}, sensors: {}, updatesCount, error: true, ts: Date.now() }
         });
-        setBadge(true, false);
+        setBadge(true, false, updatesCount);
     }
 }
 
