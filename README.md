@@ -6,6 +6,7 @@
 ![Chrome](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)
 ![Brave](https://img.shields.io/badge/Brave-supported-FB542B?logo=brave&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Release](https://github.com/umka-beaf/ha-control/actions/workflows/release.yml/badge.svg)](https://github.com/umka-beaf/ha-control/actions/workflows/release.yml)
 
 Расширение для **Chrome и Brave** (MV3) для управления устройствами Home Assistant
 (свет, розетки, чайники и т.п.) и отображения показаний датчиков.
