@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>HA Control — Настройки</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #16181d;
+      color: #c9d1e0;
+      font: 14px/1.5 'Segoe UI', system-ui, sans-serif;
+      padding: 28px 24px;
+      max-width: 480px;
+    }
+    h1 { color: #e8edf5; font-size: 18px; font-weight: 600; margin-bottom: 24px; }
+    h2 { color: #8892a4; font-size: 11px; font-weight: 600; letter-spacing: .07em;
+         text-transform: uppercase; margin: 20px 0 10px; }
+    label { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+    label span { font-size: 13px; color: #8892a4; }
+    input[type=text], input[type=number], input[type=password] {
+      background: #1e2128;
+      border: 1px solid #2e3140;
+      border-radius: 6px;
+      color: #e8edf5;
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      padding: 7px 10px;
+      transition: border-color .15s;
+      width: 100%;
+    }
+    input:focus { border-color: #3b82f6; }
+    .row { display: flex; gap: 12px; }
+    .row label { flex: 1; }
+    button {
+      background: #3b82f6;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 8px;
+      padding: 8px 20px;
+      transition: background .15s;
+    }
+    button:hover { background: #2563eb; }
+    #status {
+      font-size: 12px;
+      margin-left: 12px;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    #status.show { opacity: 1; }
+    #status.ok { color: #4ade80; }
+    #status.err { color: #f87171; }
+    .hint {
+      background: #1a2030;
+      border: 1px solid #2e3a50;
+      border-radius: 6px;
+      color: #8892a4;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 8px;
+      padding: 10px 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>HA Control</h1>
+
+  <h2>Подключение</h2>
+  <label>
+    <span>URL Home Assistant</span>
+    <input type="text" id="haUrl" placeholder="https://ha.example.com">
+  </label>
+  <label>
+    <span>Long-Lived Access Token</span>
+    <input type="password" id="haToken" placeholder="Профиль → Безопасность → Токены долгосрочного доступа">
+  </label>
+  <div class="hint">
+    При сохранении браузер попросит разрешение на доступ к указанному домену —
+    это нужно, чтобы расширение могло опрашивать Home Assistant.
+  </div>
+
+  <h2>Объекты</h2>
+  <label>
+    <span>Entity ID через запятую (управляемые)</span>
+    <input type="text" id="entities" placeholder="light.living_room,light.bedroom">
+  </label>
+  <label>
+    <span>Сцены через запятую</span>
+    <input type="text" id="scenes" placeholder="scene.komfort,scene.son">
+  </label>
+  <label>
+    <span>Датчики через запятую (только отображение)</span>
+    <input type="text" id="sensors" placeholder="sensor.kettle_temperature">
+  </label>
+
+  <h2>Поведение</h2>
+  <div class="row">
+    <label>
+      <span>Шаг ползунка яркости (%)</span>
+      <input type="number" id="brightnessStep" min="1" max="25" step="1">
+    </label>
+    <label>
+      <span>Фоновое обновление значка (мин)</span>
+      <input type="number" id="badgeInterval" min="1" max="60" step="1">
+    </label>
+  </div>
+
+  <div style="display:flex;align-items:center;margin-top:4px">
+    <button id="btn-save">Сохранить</button>
+    <span id="status"></span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

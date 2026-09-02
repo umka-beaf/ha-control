@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "HA Control",
+  "version": "1.0.0",
+  "description": "Управление устройствами Home Assistant: переключатели, яркость, сцены, датчики.",
+  "permissions": ["storage", "alarms"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "HA Control",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
