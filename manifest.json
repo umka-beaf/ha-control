@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "HA Control",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Управление устройствами Home Assistant: переключатели, яркость, сцены, датчики.",
   "permissions": ["storage", "alarms"],
   "optional_host_permissions": ["https://*/*", "http://*/*"],
