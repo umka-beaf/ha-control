@@ -29,7 +29,7 @@ lives in a private monorepo alongside my other desktop applets).
 
 1. Clone the repo.
 2. `chrome://extensions` (`brave://extensions` on Brave) → enable "Developer mode" →
-   "Load unpacked" → select `extension`.
+   "Load unpacked" → select this folder.
 
 ### Setup
 
@@ -68,8 +68,8 @@ separately at the bottom.
 
 Original work, versioning starts at `1.0.0`. Releases are built automatically
 ([GitHub Actions](.github/workflows/release.yml)): pushing a `vX.Y.Z` tag (must
-match `manifest.json`) builds `ha-control.zip` from the `extension/` folder and
-publishes it as a GitHub Release.
+match `manifest.json`) builds `ha-control.zip` and publishes it as a GitHub
+Release.
 
 ## 📄 License
 
