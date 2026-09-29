@@ -2,7 +2,7 @@
 
 🇷🇺 Русский · [🇬🇧 English](README.en.md)
 
-![version](https://img.shields.io/badge/version-1.1.0-blue)
+![version](https://img.shields.io/badge/version-1.2.0-blue)
 ![Chrome](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)
 ![Brave](https://img.shields.io/badge/Brave-supported-FB542B?logo=brave&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -47,7 +47,7 @@
 ## 🧩 Устройство
 
 - `background.js` — service worker: опрашивает HA по `chrome.alarms` (раз в N минут, обновляет значок панели: зелёный «on» / без значка «off» / красный «!» при ошибке), выполняет вызовы сервисов
-- `popup.html/js` — список устройств с тумблерами и слайдером яркости, кнопки «включить/выключить всё», сцены, датчики; пока popup открыт — опрашивает HA каждые 4 сек для отзывчивости
+- `popup.html/js` — список устройств с тумблерами и слайдером яркости, кнопки «включить/выключить всё», сцены, датчики, кнопка открытия сервера HA в новой вкладке; пока popup открыт — опрашивает HA каждые 4 сек для отзывчивости
 - `options.html/js` — настройки, запрос `optional_host_permissions` под введённый URL
 - `ha-api.js` — общая логика REST-запросов и матчинга датчиков к устройствам, подключается и в background, и в popup
 

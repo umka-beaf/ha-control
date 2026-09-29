@@ -2,7 +2,7 @@
 
 [🇷🇺 Русский](README.md) · 🇬🇧 English
 
-![version](https://img.shields.io/badge/version-1.1.0-blue)
+![version](https://img.shields.io/badge/version-1.2.0-blue)
 ![Chrome](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)
 ![Brave](https://img.shields.io/badge/Brave-supported-FB542B?logo=brave&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -44,7 +44,7 @@ lives in a private monorepo alongside my other desktop applets).
 ## 🧩 How it's built
 
 - `background.js` — service worker: polls HA via `chrome.alarms` (every N minutes, updates the icon badge: green "on" / no badge "off" / red "!" on error), executes service calls
-- `popup.html/js` — device list with toggles and a brightness slider, "turn all on/off" buttons, scenes, sensors; while the popup is open, polls HA every 4s for responsiveness
+- `popup.html/js` — device list with toggles and a brightness slider, "turn all on/off" buttons, scenes, sensors, a button to open the HA server in a new tab; while the popup is open, polls HA every 4s for responsiveness
 - `options.html/js` — settings, requests `optional_host_permissions` for the entered URL
 - `ha-api.js` — shared REST-request and sensor-matching logic, used by both background and popup
 

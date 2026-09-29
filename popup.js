@@ -1,4 +1,5 @@
 const contentEl = document.getElementById('content');
+const btnOpen = document.getElementById('btn-open');
 const btnRefresh = document.getElementById('btn-refresh');
 const btnOptions = document.getElementById('btn-options');
 
@@ -6,6 +7,9 @@ let settings = null;
 let state = { lights: {}, scenes: {}, sensors: {}, error: true };
 let brightnessTimers = {};  // entityId → timeout id
 
+btnOpen.addEventListener('click', () => {
+    if (settings && settings.haUrl) window.open(settings.haUrl, '_blank');
+});
 btnOptions.addEventListener('click', () => chrome.runtime.openOptionsPage());
 btnRefresh.addEventListener('click', () => loadAndRender(true));
 
@@ -13,7 +17,7 @@ init();
 
 async function init() {
     settings = await chrome.storage.sync.get({
-        entities: '', scenes: '', sensors: '', brightnessStep: 1
+        haUrl: '', entities: '', scenes: '', sensors: '', brightnessStep: 1
     });
 
     // Быстрый первый рендер из кэша, затем — свежий опрос.
