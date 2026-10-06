@@ -11,12 +11,61 @@ const DEFAULTS = {
 const fields = ['haUrl', 'haToken', 'entities', 'scenes', 'sensors', 'brightnessStep', 'badgeInterval'];
 const statusEl = document.getElementById('status');
 
+const ENTITY_PICK_DOMAINS = ['light', 'switch', 'fan', 'input_boolean', 'cover', 'lock'];
+const PICKERS = [
+    ['pick-entities', 'entities', s => ENTITY_PICK_DOMAINS.includes(s.entity_id.split('.')[0])],
+    ['pick-scenes', 'scenes', s => s.entity_id.startsWith('scene.')],
+    ['pick-sensors', 'sensors', s => s.entity_id.startsWith('sensor.')]
+];
+
 init();
 
 async function init() {
     const s = await chrome.storage.sync.get(DEFAULTS);
     for (const id of fields) document.getElementById(id).value = s[id];
     document.getElementById('btn-save').addEventListener('click', save);
+    document.getElementById('btn-load-entities').addEventListener('click', loadEntities);
+
+    for (const [pickId, fieldId] of PICKERS) {
+        document.getElementById(pickId).addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (!val) return;
+            const field = document.getElementById(fieldId);
+            const ids = parseIds(field.value);
+            if (!ids.includes(val)) ids.push(val);
+            field.value = ids.join(',');
+            e.target.value = '';
+        });
+    }
+}
+
+async function loadEntities() {
+    const loadStatus = document.getElementById('load-status');
+    const haUrl = document.getElementById('haUrl').value.trim();
+    const haToken = document.getElementById('haToken').value.trim();
+    if (!haUrl || !haToken) {
+        loadStatus.textContent = 'Укажите URL и токен, сохраните настройки';
+        return;
+    }
+
+    loadStatus.textContent = 'Загрузка…';
+    try {
+        const states = await haGet(haUrl, haToken, '/api/states');
+        for (const [pickId, , filterFn] of PICKERS) fillPicker(pickId, states.filter(filterFn));
+        loadStatus.textContent = `✓ Загружено ${states.length} объектов`;
+    } catch (e) {
+        loadStatus.textContent = `Ошибка загрузки: ${e}`;
+    }
+}
+
+function fillPicker(selectId, states) {
+    const select = document.getElementById(selectId);
+    select.innerHTML = '';
+    const placeholder = new Option('— выбрать —', '');
+    select.appendChild(placeholder);
+    for (const s of states) {
+        select.appendChild(new Option(`${s.attributes.friendly_name || s.entity_id} (${s.entity_id})`, s.entity_id));
+    }
 }
 
 function originPattern(urlStr) {

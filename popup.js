@@ -1,4 +1,5 @@
 const contentEl = document.getElementById('content');
+const updatedAtEl = document.getElementById('updated-at');
 const btnOpen = document.getElementById('btn-open');
 const btnRefresh = document.getElementById('btn-refresh');
 const btnOptions = document.getElementById('btn-options');
@@ -56,13 +57,14 @@ function callServiceAll(service) {
 function render() {
     const ids = entityIds();
     contentEl.innerHTML = '';
+    updatedAtEl.textContent = state.ts ? formatAgo(state.ts) : '';
 
     if (!ids.length) {
         contentEl.innerHTML = '<div class="empty-msg">Нет объектов — откройте настройки</div>';
         return;
     }
     if (state.error && Object.keys(state.lights).length === 0) {
-        contentEl.innerHTML = '<div class="error-msg">HA недоступен</div>';
+        contentEl.innerHTML = `<div class="error-msg">${state.authError ? 'Неверный токен (401)' : 'HA недоступен'}</div>`;
         return;
     }
 
@@ -116,10 +118,29 @@ function render() {
 function renderDevice(id, light, attachedSensorIds) {
     const wrap = document.createElement('div');
     wrap.className = 'device';
+    const domain = id.split('.')[0];
 
-    const isOn = light.state === 'on';
     const row = document.createElement('div');
     row.className = 'device-row';
+
+    if (domain === 'cover') {
+        const isOpen = light.state === 'open';
+        row.innerHTML = `
+            <span class="device-name" title="${light.name}">${light.name}</span>
+            <div class="cover-actions">
+                <button data-act="open" ${isOpen ? 'disabled' : ''} title="Открыть">▲</button>
+                <button data-act="stop" title="Стоп">■</button>
+                <button data-act="close" ${!isOpen ? 'disabled' : ''} title="Закрыть">▼</button>
+            </div>`;
+        const svcByAct = { open: 'open_cover', stop: 'stop_cover', close: 'close_cover' };
+        row.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => callService(svcByAct[btn.dataset.act], id));
+        });
+        wrap.appendChild(row);
+        return wrap;
+    }
+
+    const isOn = domain === 'lock' ? light.state === 'locked' : light.state === 'on';
     row.innerHTML = `
         <span class="device-name" title="${light.name}">${light.name}</span>
         <label class="switch">
@@ -127,7 +148,11 @@ function renderDevice(id, light, attachedSensorIds) {
             <span class="slider"></span>
         </label>`;
     row.querySelector('input').addEventListener('change', (e) => {
-        callService(e.target.checked ? 'turn_on' : 'turn_off', id);
+        if (domain === 'lock') {
+            callService(e.target.checked ? 'lock' : 'unlock', id);
+        } else {
+            callService(e.target.checked ? 'turn_on' : 'turn_off', id);
+        }
     });
     wrap.appendChild(row);
 
@@ -170,6 +195,12 @@ function renderSensorRow(sensor) {
     row.className = 'sensor-item';
     row.innerHTML = `<span class="name">${sensor.name}</span><span class="val">${formatSensor(sensor)}</span>`;
     return row;
+}
+
+function formatAgo(ts) {
+    const sec = Math.round((Date.now() - ts) / 1000);
+    if (sec < 60) return `${sec} сек назад`;
+    return `${Math.round(sec / 60)} мин назад`;
 }
 
 function formatSensor(sensor) {

@@ -6,11 +6,17 @@ function haBase(url) {
     return (url || '').replace(/\/$/, '');
 }
 
+function httpError(status) {
+    const err = new Error(`HTTP ${status}`);
+    err.status = status;
+    return err;
+}
+
 async function haGet(baseUrl, token, path) {
     const res = await fetch(`${haBase(baseUrl)}${path}`, {
         headers: { Authorization: `Bearer ${token}` }
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw httpError(res.status);
     return res.json();
 }
 
@@ -23,7 +29,7 @@ async function haPost(baseUrl, token, path, body) {
         },
         body: JSON.stringify(body || {})
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw httpError(res.status);
     try { return await res.json(); } catch (e) { return null; }
 }
 
@@ -83,6 +89,7 @@ async function pollHa({ haUrl, haToken, entities, scenes, sensors }) {
     const sceneMap = {};
     const sensorMap = {};
     let error = false;
+    let authError = false;
 
     if (entities.length) {
         const results = await Promise.allSettled(
@@ -91,6 +98,7 @@ async function pollHa({ haUrl, haToken, entities, scenes, sensors }) {
         let anyOk = false;
         results.forEach((r, i) => {
             if (r.status === 'fulfilled') { lights[entities[i]] = r.value; anyOk = true; }
+            else if (r.reason && r.reason.status === 401) authError = true;
         });
         error = !anyOk;
     } else {
@@ -104,7 +112,7 @@ async function pollHa({ haUrl, haToken, entities, scenes, sensors }) {
         try { sensorMap[id] = await fetchEntityState(haUrl, haToken, id); } catch (e) { /* пропускаем */ }
     }));
 
-    return { lights, scenes: sceneMap, sensors: sensorMap, error };
+    return { lights, scenes: sceneMap, sensors: sensorMap, error, authError };
 }
 
 // Считает число сущностей update.* в состоянии "on" (т.е. доступных обновлений).

@@ -65,6 +65,28 @@
       margin-top: 8px;
       padding: 10px 12px;
     }
+    .pick-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .pick-row input { flex: 1; }
+    .pick-row select {
+      background: #1e2128;
+      border: 1px solid #2e3140;
+      border-radius: 6px;
+      color: #8892a4;
+      font: inherit;
+      font-size: 12px;
+      max-width: 120px;
+      padding: 7px 4px;
+    }
+    #btn-load-entities {
+      background: none;
+      border: 1px solid #2e3140;
+      color: #8892a4;
+      font-size: 12px;
+      font-weight: 400;
+      margin: -8px 0 10px;
+      padding: 5px 10px;
+    }
+    #btn-load-entities:hover { background: #1e2128; color: #e8edf5; }
   </style>
 </head>
 <body>
@@ -85,17 +107,29 @@
   </div>
 
   <h2>Объекты</h2>
+  <button type="button" id="btn-load-entities">⟳ Загрузить список объектов из HA</button>
+  <span id="load-status" style="font-size:12px;color:#8892a4"></span>
+
   <label>
     <span>Entity ID через запятую (управляемые)</span>
-    <input type="text" id="entities" placeholder="light.living_room,light.bedroom">
+    <div class="pick-row">
+      <input type="text" id="entities" placeholder="light.living_room,light.bedroom">
+      <select id="pick-entities"><option value="">— выбрать —</option></select>
+    </div>
   </label>
   <label>
     <span>Сцены через запятую</span>
-    <input type="text" id="scenes" placeholder="scene.komfort,scene.son">
+    <div class="pick-row">
+      <input type="text" id="scenes" placeholder="scene.komfort,scene.son">
+      <select id="pick-scenes"><option value="">— выбрать —</option></select>
+    </div>
   </label>
   <label>
     <span>Датчики через запятую (только отображение)</span>
-    <input type="text" id="sensors" placeholder="sensor.kettle_temperature">
+    <div class="pick-row">
+      <input type="text" id="sensors" placeholder="sensor.kettle_temperature">
+      <select id="pick-sensors"><option value="">— выбрать —</option></select>
+    </div>
   </label>
 
   <h2>Поведение</h2>
@@ -115,6 +149,7 @@
     <span id="status"></span>
   </div>
 
+  <script src="ha-api.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

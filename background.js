@@ -18,11 +18,11 @@ function getSettings() {
 
 // Значок показывает: ошибку связи (!) > число доступных обновлений > "on"
 // если что-то из управляемых объектов включено > пусто.
-function setBadge(error, anyOn, updatesCount) {
+function setBadge(error, anyOn, updatesCount, authError) {
     if (error) {
         chrome.action.setBadgeText({ text: '!' });
         chrome.action.setBadgeBackgroundColor({ color: '#f87171' });
-        chrome.action.setTitle({ title: 'HA Control — ошибка подключения' });
+        chrome.action.setTitle({ title: authError ? 'HA Control — неверный токен' : 'HA Control — ошибка подключения' });
     } else if (updatesCount > 0) {
         chrome.action.setBadgeText({ text: String(updatesCount) });
         chrome.action.setBadgeBackgroundColor({ color: '#fbbf24' });
@@ -67,7 +67,7 @@ async function refresh() {
         const state = await pollHa({ haUrl: s.haUrl, haToken: s.haToken, entities, scenes, sensors });
         await chrome.storage.local.set({ haState: Object.assign(state, { updatesCount, ts: Date.now() }) });
         const anyOn = Object.values(state.lights).some(l => l.state === 'on');
-        setBadge(state.error, anyOn, updatesCount);
+        setBadge(state.error, anyOn, updatesCount, state.authError);
     } catch (e) {
         await chrome.storage.local.set({
             haState: { lights: {}, scenes: {}, sensors: {}, updatesCount, error: true, ts: Date.now() }

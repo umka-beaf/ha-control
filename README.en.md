@@ -2,13 +2,13 @@
 
 [🇷🇺 Русский](README.md) · 🇬🇧 English
 
-![version](https://img.shields.io/badge/version-1.2.0-blue)
+![version](https://img.shields.io/badge/version-1.3.0-blue)
 ![Chrome](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)
 ![Brave](https://img.shields.io/badge/Brave-supported-FB542B?logo=brave&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A **Chrome/Brave** (MV3) extension to control Home Assistant devices (lights,
-outlets, kettles, etc.) and display sensor readings.
+outlets, kettles, covers, locks, etc.) and display sensor readings.
 A browser counterpart to my own Cinnamon applet `ha-control@beaf` (not published —
 lives in a private monorepo alongside my other desktop applets).
 
@@ -45,7 +45,7 @@ lives in a private monorepo alongside my other desktop applets).
 
 - `background.js` — service worker: polls HA via `chrome.alarms` (every N minutes, updates the icon badge: green "on" / no badge "off" / red "!" on error), executes service calls
 - `popup.html/js` — device list with toggles and a brightness slider, "turn all on/off" buttons, scenes, sensors, a button to open the HA server in a new tab; while the popup is open, polls HA every 4s for responsiveness
-- `options.html/js` — settings, requests `optional_host_permissions` for the entered URL
+- `options.html/js` — settings, requests `optional_host_permissions` for the entered URL, a button to load the entity list from HA and pick objects from dropdowns instead of typing entity_ids by hand
 - `ha-api.js` — shared REST-request and sensor-matching logic, used by both background and popup
 
 ## 🔗 Sensor matching

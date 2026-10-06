@@ -41,6 +41,7 @@ body {
   border-bottom: 1px solid var(--border);
 }
 #title { flex: 1; font-weight: 600; font-size: 13px; color: var(--text-val); }
+#updated-at { font-size: 10.5px; color: var(--text-dim); }
 #header button {
   background: none;
   border: 1px solid var(--border);
@@ -127,6 +128,21 @@ body {
 }
 .switch input:checked + .slider { background: var(--green); }
 .switch input:checked + .slider::before { transform: translateX(15px); }
+
+/* cover open/stop/close */
+.cover-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.cover-actions button {
+  background: var(--bg-sec);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-val);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 4px 7px;
+}
+.cover-actions button:hover:not(:disabled) { background: var(--bg-hover); border-color: #4a5168; }
+.cover-actions button:disabled { color: var(--text-dim); cursor: default; opacity: .5; }
 
 /* brightness slider */
 .brightness {
